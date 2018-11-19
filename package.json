@@ -1,8 +1,8 @@
 {
-  "name": "starter-theme",
-  "version": "1.0.0-alpha.1",
+  "name": "Bootstrapify",
+  "version": "2.0.0-alpha.1",
   "private": true,
-  "author": "Shopify Inc.",
+  "author": "Lucid",
   "description": "An opinionated, Slate compatible, starting point for developing Shopify themes.",
   "keywords": [
     "shopify",
@@ -15,7 +15,7 @@
     "url": "https://github.com/Shopify/starter-theme.git"
   },
   "devDependencies": {
-    "@shopify/slate-tools": "1.0.0-beta.12",
+    "@shopify/slate-tools": "1.0.0-beta.13",
     "babel-preset-shopify": "^16.2.0",
     "eslint-plugin-shopify": "^19.0.0",
     "stylelint-config-prettier": "^3.0.4",
