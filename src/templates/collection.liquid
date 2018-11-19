@@ -1,11 +1,31 @@
 {% paginate collection.products by 12 %}
   <header role="banner">
-    <div class="container">
+      {% if collection.image %}
+      <div id="collectionBanner" class="carousel slide mb-5" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item align-middle active">
+            {% include 'responsive-image',
+              image: collection.image,
+              max_width: 4000,
+              max_height: 1000,
+              class: "d-block w-100"
+            %}
+            <div class="carousel-caption d-none d-md-block">
+              <div class="container">
+                <h1>{{ collection.title }}</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="container">
       <h1>{{ collection.title }}</h1>
       {% if collection.description != blank %}
-        <div class="rte">
+        <div class="lead">
           {{ collection.description }}
         </div>
+      {% endif %}
       {% endif %}
 
       {% if collection.all_tags.size > 0 %}
@@ -22,15 +42,15 @@
             {% endif %}
           {% endfor %}
         </ul>
+      </div>
       {% endif %}
-    </div>
   </header>
 
   <div class="container">
     <div class="row">
       {% for product in collection.products %}
       <div class="col-sm-3">
-        <div class="card text-center">
+        <div class="card mb-4 text-center">
           {% if product.featured_image != blank %}
           <a href="{{ product.url | within: collection }}">
             {% include 'responsive-image',
