@@ -1,18 +1,6 @@
-{%- comment -%}
-  This is a required section for the Shopify Theme Store.
-  It is available in the "Header" section in the theme editor.
-
-  Theme Store required settings
-  - Show announcement
-  - Text: message to announce
-  - Link: link of the announcement bar
-
-  Theme Store optional settings
-  - Home page only: only shows on the home page
-{%- endcomment -%}
-<section data-section-id="{{ section.id }}" data-section-type="header">
+<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light">
   {%- if section.settings.announcement_bar_enabled -%}
-    <div>
+    <div class="container">
       {%- if section.settings.announcement_bar_home_page_only == false or template.name == 'index' -%}
         {%- if section.settings.announcement_bar_link != blank -%}
           <a href="{{ section.settings.announcement_bar_link }}">
@@ -25,116 +13,93 @@
     </div>
   {%- endif -%}
 
-  <header role="banner">
-    {% if template.name == 'index' %}
-      <h1>
-    {% else %}
-      <div class="h1">
-    {% endif %}
-        <a href="/" class="logo-image">
-          {% if section.settings.logo != blank %}
-            {% capture image_size %}{{ section.settings.logo_max_width }}x{% endcapture %}
-            <img src="{{ section.settings.logo | img_url: image_size }}"
-                srcset="{{ section.settings.logo | img_url: image_size }} 1x, {{ section.settings.logo | img_url: image_size, scale: 2 }} 2x"
-                alt="{{ section.settings.logo.alt | default: shop.name }}">
-          {% else %}
-            {{ shop.name }}
-          {% endif %}
-        </a>
-    {% if template.name == 'index' %}
-      </h1>
-    {% else %}
-      </div>
-    {% endif %}
+  <div class="container">
+    <a class="navbar-brand" href="/">{{ shop.name }}</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <a href="/cart">
-      {% include 'icon-cart' %}
-      {{ 'layout.cart.title' | t }}
-      ({{ cart.item_count }} {{ 'layout.cart.items_count' | t: count: cart.item_count }})
-    </a>
-
-    {% if shop.customer_accounts_enabled %}
-      <ul>
-        {% if customer %}
-          <li>
-            {% if customer.first_name != blank %}
-              {% capture first_name %}<a href="/account">{{ customer.first_name }}</a>{% endcapture %}
-              {{ 'layout.customer.logged_in_as_html' | t: first_name: first_name }}
-            {% else %}
-              <a href="/account">{{ 'layout.customer.account' | t }}</a>
-            {% endif %}
-          </li>
-          <li>
-            {{ 'layout.customer.log_out' | t | customer_logout_link }}
-          </li>
-        {% else %}
-          <li>
-            {{ 'layout.customer.log_in' | t | customer_login_link }}
-          </li>
-          <li>
-            {{ 'layout.customer.create_account' | t | customer_register_link }}
-          </li>
-        {% endif %}
-      </ul>
-    {% endif %}
-
-    <form action="/search" method="get" role="search">
-      <label for="Search-{{ section.id }}" class="label-hidden">
-        {{ 'general.search.placeholder' | t }}
-      </label>
-
-      <input type="search"
-        name="q"
-        id="Search-{{ section.id }}"
-        value="{{ search.terms | escape }}"
-        placeholder="{{ 'general.search.placeholder' | t }}">
-
-      <button type="submit" class="button">
-        {% include 'icon-search' %}
-        <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
-      </button>
-    </form>
-  </header>
-
-  <nav role="navigation">
-    <ul>
-      {% for link in linklists[section.settings.menu].links %}
-        {% if link.links != blank %}
-          <li>
-            <a href="{{ link.url }}">
-              {{ link.title }}
-              {% include 'icon-arrow-down' %}
-            </a>
-            <ul>
-              {% for childlink in link.links %}
-                <li>
-                  <a href="{{ childlink.url }}">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        {% for link in linklists[section.settings.menu].links %}
+          {% if link.links != blank %}
+          <li class="nav-item dropdown{% if link.active %} active{% endif %}">
+              <a class="nav-link dropdown-toggle" href="{{ link.url }}" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ link.title }}{% if link.active %}<span class="sr-only">(current)</span>{% endif %}
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                {% for childlink in link.links %}
+                  <a class="dropdown-item" href="{{ childlink.url }}">
                     {{ childlink.title }}
                   </a>
-                </li>
-              {% endfor %}
-            </ul>
-          </li>
-        {% else %}
-          <li>
-            <a href="{{ link.url }}">
-              {{ link.title }}
-            </a>
-          </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-  </nav>
-</section>
+                {% endfor %}
+              </ul>
+            </li>
+          {% else %}
+            <li class="nav-item{% if link.active %} active{% endif %}">
+              <a class="nav-link" href="{{ link.url }}">
+                {{ link.title }}{% if link.active %}<span class="sr-only">(current)</span>{% endif %}
+              </a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
 
-{% if section.settings.logo != blank %}
-  <style>
-    .logo-image {
-      display: block;
-      max-width: {{ section.settings.logo_max_width }}px;
-    }
-  </style>
-{% endif %}
+      {% comment %}
+      <form class="form-inline" action="/search">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="{{ search.terms | default: 'Search' }}" aria-label="Search" aria-describedby="button-search" name="q">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit" id="button-search"><i class="fal fa-search"></i></button>
+          </div>
+        </div>
+      </form>
+      {% endcomment %}
+
+      <ul class="navbar-nav">
+        <li class="nav-item{% if request.path contains "/search" %} active{% endif %}">
+          <a class="nav-link" href="/search">
+            <i class="fal fa-search"></i>
+          </a>
+        </li>
+        {%- if shop.customer_accounts_enabled -%}
+        <li class="nav-item dropdown{% if request.path contains "/account" %} active{% endif %}">
+          <a class="nav-link dropdown-toggle" href="/account" id="accountDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fal fa-user"></i>{% if request.path contains "/account" %}<span class="sr-only">(current)</span>{% endif %}
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+            {% if customer %}
+            <li class="dropdown-item">
+              {% if customer.first_name != blank %}
+                {% capture first_name %}<a href="/account">{{ customer.first_name }}</a>{% endcapture %}
+                {{ 'layout.customer.logged_in_as_html' | t: first_name: first_name }}
+              {% else %}
+                <a href="/account">{{ 'layout.customer.account' | t }}</a>
+              {% endif %}
+            </li>
+            <li class="dropdown-item">
+              {{ 'layout.customer.log_out' | t | customer_logout_link }}
+            </li>
+            {% else %}
+            <li class="dropdown-item">
+              {{ 'layout.customer.log_in' | t | customer_login_link }}
+            </li>
+            <li class="dropdown-item">
+              {{ 'layout.customer.create_account' | t | customer_register_link }}
+            </li>
+          </ul>
+        </li>
+        {% endif %}
+        {%- endif -%}
+        <li class="nav-item">
+          <a class="nav-link{% if request.path == "/cart" %} active{% endif %}" href="/cart">
+            <i class="fal fa-shopping-cart"></i> <span class="badge badge-pill badge-{% if cart.item_count > 0 %}primary{% else %}secondary{% endif %}">{{ cart.item_count }}</span>{% if request.path == "/cart" %}<span class="sr-only">(current)</span>{% endif %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
 {% schema %}
   {
